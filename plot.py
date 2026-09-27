@@ -49,15 +49,101 @@ def main():
 
     print(f"{len(values)} values, from {min(values)} to {max(values)}")
 
-    fig, ax = plt.subplots(figsize=(10, 4))
-    ax.plot(days, values, linewidth=1.5)
-    ax.set_xlabel("day of 2026")
-    ax.set_ylabel("daily mean cloud amount, %")
-    ax.set_title("Hong Kong Observatory, Daily Mean Cloud Amount in 2026")
+    # --- Cloud Cover visualisation ---
+    fig, ax = plt.subplots(figsize=(12, 5))
+
+    # Create one continuous cloud mass.
+    ax.fill_between(
+        days,
+        values,
+        0,
+        alpha=0.35,
+    )
+
+    # Add a thin outline to show the changing cloud level.
+    ax.plot(
+        days,
+        values,
+        linewidth=1.0,
+    )
+
+    # Cloud amount is a percentage from 0 to 100.
+    ax.set_ylim(0, 100)
+    ax.set_xlim(1, len(days))
+
+    # Reference levels.
+    ax.set_yticks([0, 25, 50, 75, 100])
+    ax.set_ylabel("Daily mean cloud amount (%)")
+
+    # Month positions for the x-axis.
+    month_days = [1, 32, 60, 91, 121, 152, 182, 213]
+    month_labels = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+    ]
+
+    ax.set_xticks(month_days)
+    ax.set_xticklabels(month_labels)
+
+    ax.set_xlabel("2026")
+
+    # Very subtle horizontal reference lines.
+    ax.grid(
+        axis="y",
+        linewidth=0.5,
+        alpha=0.15,
+    )
+
+    ax.set_axisbelow(True)
+
+    # Remove unnecessary borders.
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    # Title.
+    ax.set_title(
+        "Cloud Cover — Hong Kong, 2026",
+        loc="left",
+        fontsize=18,
+        pad=18,
+    )
+
+    # Small explanation.
+    ax.text(
+        0,
+        -0.22,
+        "Each day forms part of the cloud layer. "
+        "Height = daily mean cloud amount.",
+        transform=ax.transAxes,
+        fontsize=9,
+        alpha=0.6,
+    )
+
+    # Data source.
+    ax.text(
+        1,
+        -0.22,
+        "Source: Hong Kong Observatory",
+        transform=ax.transAxes,
+        fontsize=9,
+        alpha=0.6,
+        ha="right",
+    )
+
     fig.tight_layout()
 
     OUT.mkdir(exist_ok=True)
-    fig.savefig(OUT / PICTURE, dpi=150)
+    fig.savefig(
+        OUT / PICTURE,
+        dpi=200,
+        bbox_inches="tight",
+    )
     print(f"saved out/{PICTURE}")
 
     plt.show()
